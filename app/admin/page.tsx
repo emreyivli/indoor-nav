@@ -3,11 +3,26 @@
 import { useAppStore } from '@/utils/store';
 import Link from 'next/link';
 import { Plus, Edit, MapPin } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function AdminPage() {
-    const { state, isLoaded } = useAppStore();
+    const { state, isLoaded, fetchBuildings, addBuilding } = useAppStore();
+    const [isCreating, setIsCreating] = useState(false);
 
-    if (!isLoaded) return <div className="p-8">Yükleniyor...</div>;
+    useEffect(() => {
+        fetchBuildings();
+    }, []);
+
+    const handleCreate = async () => {
+        const name = prompt('Bina adı giriniz:');
+        if (name) {
+            setIsCreating(true);
+            await addBuilding(name);
+            setIsCreating(false);
+        }
+    };
+
+    if (!isLoaded && state.buildings.length === 0) return <div className="p-8">Yükleniyor...</div>;
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
@@ -20,8 +35,13 @@ export default function AdminPage() {
                 <section className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl font-semibold text-gray-700">Binalar</h2>
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
-                            <Plus className="w-4 h-4" /> Yeni Bina
+                        <button
+                            onClick={handleCreate}
+                            disabled={isCreating}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            <Plus className="w-4 h-4" />
+                            {isCreating ? 'Ekleniyor...' : 'Yeni Bina'}
                         </button>
                     </div>
 

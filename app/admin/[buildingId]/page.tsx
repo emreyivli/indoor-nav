@@ -100,6 +100,7 @@ export default function BuildingEditPage({ params }: { params: Promise<{ buildin
                             onClick={handleAddFloor}
                             disabled={!newFloorName}
                             className="px-6 py-2 bg-emerald-600 text-white rounded-md font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
                         >
                             Kat Ekle
                         </button>

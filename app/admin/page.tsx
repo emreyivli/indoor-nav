@@ -2,11 +2,11 @@
 
 import { useAppStore } from '@/utils/store';
 import Link from 'next/link';
-import { Plus, Edit, MapPin } from 'lucide-react';
+import { Plus, Edit, MapPin, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function AdminPage() {
-    const { state, isLoaded, fetchBuildings, addBuilding } = useAppStore();
+    const { state, isLoaded, fetchBuildings, addBuilding, deleteBuilding } = useAppStore();
     const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
@@ -53,12 +53,26 @@ export default function AdminPage() {
                                         <h3 className="text-xl font-bold text-gray-900">{building.name}</h3>
                                         <p className="text-gray-500 text-sm">ID: {building.id}</p>
                                     </div>
-                                    <Link
-                                        href={`/admin/${building.id}`}
-                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                                    >
-                                        <Edit className="w-5 h-5" />
-                                    </Link>
+                                    <div className="flex gap-2">
+                                        <Link
+                                            href={`/admin/${building.id}`}
+                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                                            title="Düzenle"
+                                        >
+                                            <Edit className="w-5 h-5" />
+                                        </Link>
+                                        <button
+                                            onClick={async () => {
+                                                if (confirm('Binayı ve tüm katlarını silmek istediğinize emin misiniz?')) {
+                                                    await deleteBuilding(building.id);
+                                                }
+                                            }}
+                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                                            title="Sil"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">

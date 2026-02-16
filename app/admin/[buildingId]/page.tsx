@@ -10,7 +10,7 @@ import QRCode from 'react-qr-code';
 export default function BuildingEditPage({ params }: { params: Promise<{ buildingId: string }> }) {
     const resolvedParams = use(params);
     const router = useRouter();
-    const { state, updateBuilding, isLoaded } = useAppStore();
+    const { state, updateBuilding, addFloor, deleteFloor, isLoaded } = useAppStore();
     const [newFloorName, setNewFloorName] = useState('');
     const [showQrFor, setShowQrFor] = useState<string | null>(null);
 
@@ -19,27 +19,9 @@ export default function BuildingEditPage({ params }: { params: Promise<{ buildin
     const building = state.buildings.find(b => b.id === resolvedParams.buildingId);
     if (!building) return <div className="p-8">Bina bulunamadı.</div>;
 
-    const handleAddFloor = () => {
+    const handleAddFloor = async () => {
         if (!newFloorName.trim()) return;
-
-        const newFloor = {
-            id: `floor-${Date.now()}`,
-            name: newFloorName,
-            level: building.floors.length,
-            introMessage: `${building.name} ${newFloorName} katına hoş geldiniz.`,
-            zones: Array(4).fill(null).map((_, i) => ({
-                id: `zone-${Date.now()}-${i}`,
-                label: `Bölge ${i + 1}`,
-                description: 'Bu bölge henüz tanımlanmadı.',
-                type: 'other' as const,
-                color: ['bg-orange-500', 'bg-blue-600', 'bg-emerald-500', 'bg-pink-500'][i]
-            }))
-        };
-
-        updateBuilding({
-            ...building,
-            floors: [...building.floors, newFloor]
-        });
+        await addFloor(building.id, newFloorName);
         setNewFloorName('');
     };
 

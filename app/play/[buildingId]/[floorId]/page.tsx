@@ -10,11 +10,17 @@ import { Home, ArrowUp, ArrowDown, Ear } from 'lucide-react';
 export default function FloorPage({ params }: { params: Promise<{ buildingId: string; floorId: string }> }) {
     const resolvedParams = use(params);
     const router = useRouter();
-    const { state, isLoaded } = useAppStore();
+    const { state, isLoaded, fetchBuildings } = useAppStore();
     const [hasStarted, setHasStarted] = useState(false);
 
     const building = state.buildings.find(b => b.id === resolvedParams.buildingId);
     const floor = building?.floors.find(f => f.id === resolvedParams.floorId);
+
+    useEffect(() => {
+        if (!isLoaded && state.buildings.length === 0) {
+            fetchBuildings();
+        }
+    }, [isLoaded, fetchBuildings, state.buildings.length]);
 
     useEffect(() => {
         if (hasStarted && floor) {
